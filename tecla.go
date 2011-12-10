@@ -53,7 +53,7 @@ static GetLine* init(void) {
 #cgo linux LDFLAGS:-lncurses
 */
 import "C"
-import "errors"
+import "os"
 import "unsafe"
 
 type Tecla struct {
@@ -72,7 +72,7 @@ func (self *Tecla) ChangePrompt(prompt string) {
 	self.cprompt = intern(self.prompts, prompt)
 }
 
-func (self *Tecla) ReadString(delim byte) (line string, err error) {
+func (self *Tecla) ReadString(delim byte) (line string, err os.Error) {
 	var null *C.char
 
 	cline := C.gl_get_line(self.creader, self.cprompt, null, 0)
@@ -86,7 +86,7 @@ func (self *Tecla) ReadString(delim byte) (line string, err error) {
 		self.cprompt = null
 		self.creader = C.del_GetLine(self.creader)
 
-		return "", errors.New("EOF")
+		return "", os.NewError("EOF")
 	}
 
 	return C.GoString(cline), nil
